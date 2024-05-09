@@ -2,6 +2,38 @@ import 'package:evup_flutter/Classi/User.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
+class ProfilePicture extends StatelessWidget {
+  final String imageUrl;
+
+  const ProfilePicture({Key? key, required this.imageUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      width: MediaQuery.of(context).size.width / 6,
+      height: MediaQuery.of(context).size.width / 6,
+      decoration: BoxDecoration(
+        color: Colors.grey[200], // Colore di sfondo del quadrato
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(8.0), // Bordo arrotondato in basso a sinistra
+        ),
+      ),
+      child: ClipRect(
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.fill, // Adatta l'immagine per coprire tutto il quadrato
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
 
 class LoginSuccessPage extends StatelessWidget {
   final String refreshToken;
@@ -36,6 +68,7 @@ class LoginSuccessPage extends StatelessWidget {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +95,8 @@ class LoginSuccessPage extends StatelessWidget {
                   Text('Ruolo: ${user.role}'),
                   Text('Piano: ${user.plan}'),
                   Text('Descrizione: ${user.description}'),
-                  Image.network(user.picture),
+                  SizedBox(height: 16.0),
+                  ProfilePicture(imageUrl: user.picture),
                 ],
               ),
             );
