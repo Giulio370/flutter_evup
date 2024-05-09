@@ -1,3 +1,4 @@
+import 'package:evup_flutter/Classi/User.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'userInfo.dart'; 
@@ -30,6 +31,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final Dio _dio = Dio();
 
+  String? _refreshToken;
+  String? _accessToken;
+
   Future<void> login() async {
     final String url = 'http://localhost:8000/auth/login/email';
     final Map<String, dynamic> data = {
@@ -41,15 +45,49 @@ class _LoginPageState extends State<LoginPage> {
       final response = await _dio.post(
         url,
         data: data,
-        options: Options(responseType: ResponseType.json),  
+        options: Options(responseType: ResponseType.json, followRedirects: false),  
         
       );
 
       if (response.statusCode == 200) {
-        // Gestisci la risposta del backend qui
-        // Esempio:
-        // final responseData = response.data;
-        navigateToOtherPage();  
+        // Se il login ha avuto successo, estrai e salva i cookie
+        List<String>? cookies = response.headers['set-cookie'];
+        if (cookies != null) {
+          for (String cookie in cookies) {
+            if (cookie.contains('refresh-token')) {
+              _refreshToken = cookie.split(';')[0];
+            } else if (cookie.contains('access-token')) {
+              _accessToken = cookie.split(';')[0];
+            }
+          }
+        }
+        if (_refreshToken != null && _accessToken != null) {
+          // Ora puoi navigare alla tua pagina successiva dopo il login
+          print('accessToken: ${_accessToken}');
+          print('refreshToken: ${_refreshToken}');
+          
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginSuccessPage(
+                refreshToken: _refreshToken!,
+                accessToken: _accessToken!,
+              ),
+            ),
+          );
+
+
+
+
+        } else {
+          // Se manca uno dei due token, gestisci l'errore
+          print('Errore: token mancante nella risposta del server');
+        }
+
+        User user = User.fromJson(response.data);
+        print('Benvenuto, ${user.firstName} ${user.lastName}');
+        print('Email: ${user.email}');
+        
 
       } else {
         // Gestisci errori di login qui
@@ -61,12 +99,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void navigateToOtherPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginSuccessPage()),
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
