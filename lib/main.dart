@@ -1,4 +1,5 @@
 import 'package:evup_flutter/Classi/User.dart';
+import 'package:evup_flutter/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'userInfo.dart'; 
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      //home: LoginPage(),
+      home: SignupPage(),
     );
   }
 }
