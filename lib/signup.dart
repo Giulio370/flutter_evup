@@ -1,3 +1,6 @@
+import 'package:evup_flutter/Classi/User.dart';
+import 'package:evup_flutter/main.dart';
+import 'package:evup_flutter/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -37,6 +40,10 @@ class _SignupPageState extends State<SignupPage> {
               'phoneNumber': phoneNumber,
               'phonePrefix': _phonePrefix,
             });
+
+            if(response.statusCode == 200){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+            }
 
         // Handle response as needed
         print(response.data);
@@ -163,8 +170,8 @@ class _SignupPageState extends State<SignupPage> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: SignupPage(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     home: SignupPage(),
+//   ));
+// }
