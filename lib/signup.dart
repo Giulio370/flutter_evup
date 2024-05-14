@@ -41,9 +41,11 @@ class _SignupPageState extends State<SignupPage> {
               'phonePrefix': _phonePrefix,
             });
 
-            if(response.statusCode == 200){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-            }
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+
+            // if(response.statusCode == 200){
+            //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+            // }
 
         // Handle response as needed
         print(response.data);
@@ -54,17 +56,137 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text('Signup'),
+  //     ),
+  //     body: Padding(
+  //       padding: EdgeInsets.all(20.0),
+  //       child: Form(
+  //         key: _formKey,
+  //         child: ListView(
+  //           children: [
+  //             TextFormField(
+  //               controller: _emailController,
+  //               decoration: InputDecoration(labelText: 'Email'),
+  //               validator: (value) {
+  //                 if (value == null || value.isEmpty) {
+  //                   return 'Please enter your email';
+  //                 }
+  //                 // You can add more validation if needed
+  //                 return null;
+  //               },
+  //             ),
+  //             TextFormField(
+  //               controller: _passwordController,
+  //               decoration: InputDecoration(labelText: 'Password'),
+  //               obscureText: true,
+  //               validator: (value) {
+  //                 if (value == null || value.isEmpty) {
+  //                   return 'Please enter your password';
+  //                 }
+  //                 // You can add more validation if needed
+  //                 return null;
+  //               },
+  //             ),
+  //             TextFormField(
+  //               controller: _firstNameController,
+  //               decoration: InputDecoration(labelText: 'First Name'),
+  //               validator: (value) {
+  //                 if (value == null || value.isEmpty) {
+  //                   return 'Please enter your first name';
+  //                 }
+  //                 // You can add more validation if needed
+  //                 return null;
+  //               },
+  //             ),
+  //             TextFormField(
+  //               controller: _lastNameController,
+  //               decoration: InputDecoration(labelText: 'Last Name'),
+  //               validator: (value) {
+  //                 if (value == null || value.isEmpty) {
+  //                   return 'Please enter your last name';
+  //                 }
+  //                 // You can add more validation if needed
+  //                 return null;
+  //               },
+  //             ),
+  //             Row(
+  //               children: [
+  //                 DropdownButton<String>(
+  //                   value: _phonePrefix,
+  //                   onChanged: (String? newValue) {
+  //                     setState(() {
+  //                       _phonePrefix = newValue!;
+  //                     });
+  //                   },
+  //                   items: <String>['+39', '+1', '+44', '+33'] // Add more prefixes as needed
+  //                       .map<DropdownMenuItem<String>>((String value) {
+  //                     return DropdownMenuItem<String>(
+  //                       value: value,
+  //                       child: Text(value),
+  //                     );
+  //                   }).toList(),
+  //                 ),
+  //                 SizedBox(width: 10),
+  //                 Expanded(
+  //                   child: TextFormField(
+  //                     controller: _phoneNumberController,
+  //                     decoration: InputDecoration(labelText: 'Phone Number'),
+  //                     keyboardType: TextInputType.phone,
+  //                     validator: (value) {
+  //                       if (value == null || value.isEmpty) {
+  //                         return 'Please enter your phone number';
+  //                       }
+  //                       // You can add more validation if needed
+  //                       return null;
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             CheckboxListTile(
+  //               title: Text('I accept the terms and conditions'),
+  //               value: _conditionAccepted,
+  //               onChanged: (bool? value) {
+  //                 if(value != null){
+  //                   setState(() {
+  //                     _conditionAccepted = value;
+  //                   });
+  //                 }
+                  
+  //               },
+  //             ),
+  //             SizedBox(height: 20),
+  //             ElevatedButton(
+  //               onPressed: _signup,
+  //               child: Text('Signup'),
+  //             ),
+  //             SizedBox(height: 10),
+  //             ElevatedButton(onPressed:(){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));}, child: Text('Go to Login'))
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Signup'),
-      ),
-      body: Padding(
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Signup'),
+    ),
+    body: Center(
+      child: Container(
         padding: EdgeInsets.all(20.0),
+        constraints: BoxConstraints(maxWidth: 400), // Imposta larghezza massima
         child: Form(
           key: _formKey,
           child: ListView(
+            shrinkWrap: true, // Per consentire al ListView di adattarsi al contenuto
             children: [
               TextFormField(
                 controller: _emailController,
@@ -157,17 +279,32 @@ class _SignupPageState extends State<SignupPage> {
                   
                 },
               ),
+              // Altri campi del form
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _signup,
                 child: Text('Signup'),
               ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                },
+                child: Text('Go to Login'),
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
+
+
+
 }
 
 // void main() {
