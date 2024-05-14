@@ -172,6 +172,51 @@ class _SignupPageState extends State<SignupPage> {
   //     ),
   //   );
   // }
+  ///Questa funzione data un stringa, controlla che essa sia lunga almeno 8 caratteri, contenga una lettera maiuscola,
+  ///una minuscola ed un segno
+  bool validatePassword(String value){
+    bool goodPassword= true;
+    if(value.length <8 || !RegExp(r'[A-Z]').hasMatch(value) || !RegExp(r'[a-z]').hasMatch(value) || !RegExp(r'\d').hasMatch(value)|| !RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value) ){
+      goodPassword= false;
+    }
+    return goodPassword;
+  }
+
+  ///Questo metodo ritorna un messaggio di errore in base alla composizione della password
+  String? errorMessagePassword(String value) {
+    // Verifica che la lunghezza della password sia almeno 8 caratteri
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+
+    // Verifica che la password contenga almeno una lettera maiuscola
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+
+    // Verifica che la password contenga almeno una lettera minuscola
+    if (!RegExp(r'[a-z]').hasMatch(value)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+
+    // Verifica che la password contenga almeno un numero
+    if (!RegExp(r'\d').hasMatch(value)) {
+      return 'Password must contain at least one digit';
+    }
+
+    // Verifica che la password contenga almeno un segno
+    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Password must contain at least one special character';
+    }
+
+    // La password soddisfa tutti i requisiti
+    return null;
+  } 
+ 
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +252,10 @@ class _SignupPageState extends State<SignupPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
                   }
+                  if(!validatePassword(value)){
+                    return errorMessagePassword(value);
+                  }
+                  
                   // You can add more validation if needed
                   return null;
                 },

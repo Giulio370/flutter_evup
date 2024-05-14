@@ -130,11 +130,19 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
-              SizedBox(height: 12.0),
-              ElevatedButton(
-                onPressed: login,
-                child: Text('Login'),
-              ),
+              SizedBox(height: 10),
+              Row(children: [
+                ElevatedButton(onPressed: login, child: Text('Login')),
+                SizedBox(width: 10),
+                ElevatedButton(onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SignupPage() ));
+                }, child: Text('Back To SignUp'))
+              ],)
+              // SizedBox(height: 12.0),
+              // ElevatedButton(
+              //   onPressed: login,
+              //   child: Text('Login'),
+              // ),
             ],
           ),
         ),
