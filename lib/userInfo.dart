@@ -96,104 +96,121 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
 @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Pagina Utente'),
-      ),
-      body: FutureBuilder<User>(
-        future: _userFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Errore: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            final User user = snapshot.data!;
-            _generatePalette(user.picture); // Genera la palette dei colori dall'immagine del profilo
-            return Container(
-              color: _backgroundColor,
-              child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  padding: EdgeInsets.all(16.0),
-                  margin: EdgeInsets.symmetric(horizontal: 20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8), // Colore di sfondo del Container delle informazioni utente con opacità al 80%
-                    borderRadius: BorderRadius.circular(20.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3), // Riduce l'intensità dell'ombra
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 20.0),
-                      Center(
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(user.picture),
-                        ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Email', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text(user.email, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Ruolo', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text(user.role, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Piano', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text(user.plan, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Descrizione', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text(user.description, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20.0),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          } else {
-            return Center(child: Text('Nessun dato disponibile'));
-          }
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Pagina Utente'),
+      leading: IconButton( // Aggiunge il pulsante "Indietro" a sinistra
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          
         },
       ),
-    );
-  }
+      actions: [
+        IconButton( // Aggiunge il pulsante "Modifica" a destra
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            // Aggiungi logica per attivare la modalità di modifica
+          },
+        ),
+      ],
+    ),
+    body: FutureBuilder<User>(
+      future: _userFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Errore: ${snapshot.error}'));
+        } else if (snapshot.hasData) {
+          final User user = snapshot.data!;
+          _generatePalette(user.picture); // Genera la palette dei colori dall'immagine del profilo
+          return Container(
+            color: _backgroundColor,
+            child: Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                padding: EdgeInsets.all(16.0),
+                margin: EdgeInsets.symmetric(horizontal: 20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8), // Colore di sfondo del Container delle informazioni utente con opacità al 80%
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3), // Riduce l'intensità dell'ombra
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20.0),
+                    Center(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(user.picture),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    _buildEditableInfo('Email', user.email),
+                    _buildEditableInfo('Ruolo', user.role),
+                    _buildEditableInfo('Piano', user.plan),
+                    _buildEditableInfo('Descrizione', user.description),
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Center(child: Text('Nessun dato disponibile'));
+        }
+      },
+    ),
+  );
+}
+
+
+
+Widget _buildEditableInfo(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Center( // Centra il contenuto verticalmente ed orizzontalmente
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.4, // Imposta la larghezza desiderata
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label.toUpperCase(), // Converti la label in maiuscolo
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.5)), // Applica trasparenza al testo dell'etichetta
+                  ),
+                  SizedBox(height: 4),
+                  TextFormField(
+                    initialValue: value,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500), // Applica uno stile "quasi" in grassetto al testo della valuta
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(), // Aggiungi i bordi alla casella di testo
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+  
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 // class UserInfoPage extends StatelessWidget {
