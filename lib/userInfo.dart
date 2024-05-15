@@ -1,4 +1,5 @@
 import 'package:evup_flutter/Classi/User.dart';
+import 'package:evup_flutter/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -103,7 +104,15 @@ Widget build(BuildContext context) {
       leading: IconButton( // Aggiunge il pulsante "Indietro" a sinistra
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                refreshToken: refreshToken,
+                accessToken: accessToken,
+              ),
+            ),
+          );
         },
       ),
       actions: [
