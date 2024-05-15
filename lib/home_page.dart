@@ -1,8 +1,11 @@
 import 'package:evup_flutter/Classi/User.dart';
 import 'package:evup_flutter/signup.dart';
+import 'package:evup_flutter/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
 
 class HomePage extends StatefulWidget {
   final String refreshToken;
@@ -14,12 +17,16 @@ class HomePage extends StatefulWidget {
   });
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(refreshToken: this.refreshToken, accessToken: this.accessToken);
 }
 
 class _HomePageState extends State<HomePage> {
+  final String refreshToken;
+  final String accessToken;
+  _HomePageState({required this.refreshToken, required this.accessToken});
+
   late Future<User> _futureUser;
-  late GoogleMapController _mapController;
+  
   TextEditingController _searchController = TextEditingController();
 
   @override
@@ -115,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                       GestureDetector(
                         onTap: () {
                           // Logica da eseguire quando viene premuto il CircleAvatar
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SignupPage() ));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> UserInfoPage(refreshToken: refreshToken, accessToken: accessToken,) ));
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.0), // Imposta il padding sui lati del CircleAvatar
@@ -126,20 +133,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   );
-                  // return Row(
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         // Logica da eseguire quando viene premuto il CircleAvatar
-                  //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SignupPage() ));
-                  //       },
-                  //       child: CircleAvatar(
-                  //         backgroundImage: NetworkImage(snapshot.data?.picture ?? ''),
-                  //       ),
-                  //     ),
-                      
-                  //   ],
-                  // );
                 }
               },
             ),
@@ -151,19 +144,28 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Stack(
             children: [
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(37.422, -122.084), // Coordinata iniziale
-                  zoom: 15.0, // Livello di zoom iniziale
+              FlutterMap(
+                options: MapOptions(
+                  initialCenter: LatLng(51.509364, -0.128928),
+                  initialZoom: 9.2,
                 ),
-                onMapCreated: (controller) {
-                _mapController = controller;
-                },
-                // Altre proprietà della mappa
-              ),
-              // Aggiungi altri widget sopra la mappa se necessario
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.app',
+                  ),
+                  RichAttributionWidget(
+                    attributions: [
+                      TextSourceAttribution(
+                        'OpenStreetMap contributors',
+                        //onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+                      ),
+                    ],
+                  ),
+                        ],
+                ),
             ],
-          ),
+          ) 
         );
       }
     } 
