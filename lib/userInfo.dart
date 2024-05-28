@@ -95,94 +95,107 @@ class _UserInfoPageState extends State<UserInfoPage> {
       _backgroundColor = _paletteGenerator.darkVibrantColor != null ? _paletteGenerator.darkVibrantColor!.color.withOpacity(0.3) : Colors.white;
     });
   }
+  bool _isEditing = false;
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Pagina Utente'),
-      leading: IconButton( // Aggiunge il pulsante "Indietro" a sinistra
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(
-                refreshToken: refreshToken,
-                accessToken: accessToken,
-              ),
-            ),
-          );
-        },
-      ),
-      actions: [
-        IconButton( // Aggiunge il pulsante "Modifica" a destra
-          icon: Icon(Icons.edit),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pagina Utente'),
+        leading: IconButton( // Aggiunge il pulsante "Indietro" a sinistra
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Aggiungi logica per attivare la modalità di modifica
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                  refreshToken: widget.refreshToken,
+                  accessToken: widget.accessToken,
+                ),
+              ),
+            );
           },
         ),
-      ],
-    ),
-    body: FutureBuilder<User>(
-      future: _userFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Errore: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          final User user = snapshot.data!;
-          _generatePalette(user.picture); // Genera la palette dei colori dall'immagine del profilo
-          return Container(
-            color: _backgroundColor,
-            child: Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                padding: EdgeInsets.all(16.0),
-                margin: EdgeInsets.symmetric(horizontal: 20.0),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8), // Colore di sfondo del Container delle informazioni utente con opacità al 80%
-                  borderRadius: BorderRadius.circular(20.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3), // Riduce l'intensità dell'ombra
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.0),
-                    Center(
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(user.picture),
+        actions: [
+          IconButton( // Aggiunge il pulsante "Modifica" a destra
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              setState(() {
+                _isEditing = !_isEditing;
+              });
+            },
+          ),
+        ],
+      ),
+      body: FutureBuilder<User>(
+        future: _userFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Errore: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final User user = snapshot.data!;
+            _generatePalette(user.picture); // Genera la palette dei colori dall'immagine del profilo
+            return Container(
+              color: _backgroundColor,
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  padding: EdgeInsets.all(16.0),
+                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8), // Colore di sfondo del Container delle informazioni utente con opacità al 80%
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3), // Riduce l'intensità dell'ombra
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
                       ),
-                    ),
-                    SizedBox(height: 20.0),
-                    _buildEditableInfo('Email', user.email),
-                    _buildEditableInfo('Ruolo', user.role),
-                    _buildEditableInfo('Piano', user.plan),
-                    _buildEditableInfo('Descrizione', user.description),
-                    SizedBox(height: 20.0),
-                  ],
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20.0),
+                      Center(
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(user.picture),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      _buildEditableInfo('Email', user.email),
+                      _buildEditableInfo('Ruolo', user.role),
+                      _buildEditableInfo('Piano', user.plan),
+                      _buildEditableInfo('Descrizione', user.description),
+                      SizedBox(height: 20.0),
+                      if (_isEditing)
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              //Implementare funzione di modifica una volta che le API saranno complete
+                              setState(() {
+                                _isEditing = false; // Chiude la modalità di modifica dopo aver salvato
+                              });
+                            },
+                            child: Text('Salva Modifiche'),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        } else {
-          return Center(child: Text('Nessun dato disponibile'));
-        }
-      },
-    ),
-  );
-}
-
-
+            );
+          } else {
+            return Center(child: Text('Nessun dato disponibile'));
+          }
+        },
+      ),
+    );
+  }
 
 Widget _buildEditableInfo(String label, String value) {
   return Padding(
@@ -221,143 +234,3 @@ Widget _buildEditableInfo(String label, String value) {
 
   
 }
-////////////////////////////////////////////////////////////////////////////////////////////
-// class UserInfoPage extends StatelessWidget {
-//   final String refreshToken;
-//   final String accessToken;
-
-//   UserInfoPage({required this.refreshToken, required this.accessToken});//
-
-
-
-//   Future<User> fetchUser() async {
-//     String url1 = 'http://localhost:8000/auth/fetch/user';
-//     final Dio dio = Dio();
-
-//     try {
-//       // Crea un oggetto Options per includere i cookie nella richiesta
-//       Options options = Options(
-//         responseType: ResponseType.json,
-//         followRedirects: false,
-//         headers: {'cookie': '$refreshToken; $accessToken'},
-//       );
-//       final response = await dio.get(
-//         url1,
-//         options: options,
-//       );
-
-//       if (response.statusCode == 200) {
-//         return User.fromJson(response.data);
-//       } else {
-//         throw Exception('Errore durante la richiesta HTTP: ${response.statusCode}');
-//       }
-//     } catch (e) {
-//       throw Exception('Errore durante la richiesta HTTP: $e');
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Pagina Utente'),
-//       ),
-//       body: FutureBuilder<User>(
-//         future: fetchUser(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text('Errore: ${snapshot.error}'));
-//           } else if (snapshot.hasData) {
-//             final User user = snapshot.data!;
-//             return Center(
-//               child: Container(
-//                 width: MediaQuery.of(context).size.width * 0.4, // Larghezza del 80% della larghezza dello schermo
-//                 padding: EdgeInsets.all(16.0),
-//                 margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),//EdgeInsets.symmetric(horizontal: 20.0),
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(20.0),
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Colors.grey.withOpacity(0.5),
-//                       spreadRadius: 5,
-//                       blurRadius: 7,
-//                       offset: Offset(0, 3),
-//                     ),
-//                   ],
-//                 ),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     SizedBox(height: 20.0),
-//                     Center(
-//                       child: CircleAvatar(
-//                         radius: 50,
-//                         backgroundImage: NetworkImage(user.picture),
-//                       ),
-//                     ),
-//                     SizedBox(height: 20.0),
-//                     Text('Nome: ${user.firstName}'),
-//                     Text('Cognome: ${user.lastName}'),
-//                     Text('Email: ${user.email}'),
-//                     Text('Ruolo: ${user.role}'),
-//                     Text('Piano: ${user.plan}'),
-//                     Text('Descrizione: ${user.description}'),
-//                     SizedBox(height: 20.0),
-//                   ],
-//                 ),
-//               ),
-//             );
-//           } else {
-//             return Center(child: Text('Nessun dato disponibile'));
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////MetodoOK
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Pagina Utente'),
-//       ),
-//       body: FutureBuilder<User>(
-//         future: fetchUser(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text('Errore: ${snapshot.error}'));
-//           } else if (snapshot.hasData) {
-//             final User user = snapshot.data!;
-//             return Padding(
-//               padding: EdgeInsets.all(16.0),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text('Nome: ${user.firstName}'),
-//                   Text('Cognome: ${user.lastName}'),
-//                   Text('Email: ${user.email}'),
-//                   Text('Ruolo: ${user.role}'),
-//                   Text('Piano: ${user.plan}'),
-//                   Text('Descrizione: ${user.description}'),
-//                   SizedBox(height: 16.0),
-//                   ProfilePicture(imageUrl: user.picture),
-//                 ],
-//               ),
-//             );
-//           } else {
-//             return Center(child: Text('Nessun dato disponibile'));
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }

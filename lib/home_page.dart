@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               FlutterMap(
                 options: MapOptions(
-                  initialCenter: LatLng(51.509364, -0.128928),
+                  initialCenter: LatLng(46.040012, 11.075988),
                   initialZoom: 9.2,
                 ),
                 children: [
