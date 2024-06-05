@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:evup_flutter/Classi/User.dart';
+import 'package:evup_flutter/eventList.dart';
 import 'package:evup_flutter/signup.dart';
 import 'package:evup_flutter/userInfo.dart';
 import 'package:flutter/material.dart';
@@ -53,9 +56,11 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         return User.fromJson(response.data);
       } else {
-        throw Exception('Errore durante la richiesta HTTP: ${response.statusCode}');
+        print(response.data.toString());
+        throw Exception(' Errore durante la richiesta HTTP: ${response.statusCode}');
       }
     } catch (e) {
+      
       throw Exception('Errore durante la richiesta HTTP: $e');
     }
   }
@@ -85,27 +90,6 @@ class _HomePageState extends State<HomePage> {
                 // Logica da eseguire quando viene premuto il pulsante di ricerca
               },
             ),
-            // FutureBuilder<User>(
-            //   future: _futureUser,
-            //   builder: (context, snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.waiting) {
-            //       return CircularProgressIndicator();
-            //     } else if (snapshot.hasError) {
-            //       return Text('Errore durante il recupero delle informazioni dell\'utente');
-            //     } else {
-            //       return Row(
-            //         children: [
-            //           CircleAvatar(
-            //             backgroundImage: NetworkImage(snapshot.data?.picture ?? ''),
-            //           ),
-            //           SizedBox(width: 10),
-            //           Text(snapshot.data?.firstName ?? ''),
-            //         ],
-            //       );
-            //     }
-            //   },
-            // ),
-
           ],
         ),
         actions: [// Altri elementi dell'app bar a destra se necessario
@@ -140,7 +124,32 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         drawer: Drawer(
-          // Contenuto del Drawer (menu a scomparsa)
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Menu'),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+              ListTile(
+                title: Text('Sezione Eventi'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddEventPage(
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // Altre voci del menù ad hamburger
+            ],
+          ),
         ),
         body: Stack(
             children: [

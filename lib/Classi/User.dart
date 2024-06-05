@@ -42,11 +42,15 @@ class User {
       isActive: json['isActive'],
       emailVerified: json['emailVerified'],
       conditionAccepted: json['conditionAccepted'],
-      plan: json['plan'],
-      dateRenew: json['dateRenew'],
+      plan: json.containsKey('plan') ? json['plan'] : 'none',
+      dateRenew: json.containsKey('dateRenew') ? json['dateRenew'] : 'none' ,
       changePassword: json['changePassword'],
       description: json['description'],
       picture: json['picture'],
     );
   }
+
+
+
+  
 }

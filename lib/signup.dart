@@ -1,3 +1,4 @@
+import 'package:evup_flutter/eventList.dart';
 import 'package:evup_flutter/login.dart';
 import 'package:evup_flutter/main.dart';
 import 'package:flutter/material.dart';
@@ -227,6 +228,19 @@ class _SignupPageState extends State<SignupPage> {
                 },
                 child: Text('Go to Login'),
               ),
+              //////////////////////////////////////////////////////////////////
+              // SizedBox(width: 10),
+              //   ElevatedButton(onPressed: (){
+              //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> EventListPage() ));
+              //   }, child: Text('ListaEventi'))
+              //   ///////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
             ],
           ),
         ),

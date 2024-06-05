@@ -1,10 +1,16 @@
 
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:evup_flutter/Classi/User.dart';
+import 'package:evup_flutter/eventList.dart';
 import 'package:evup_flutter/home_page.dart';
 import 'package:evup_flutter/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'userInfo.dart'; 
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 
 
@@ -49,19 +55,23 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
         if (_refreshToken != null && _accessToken != null) {
-          // Ora puoi navigare alla tua pagina successiva dopo il login
+          
           print('accessToken: ${_accessToken}');
           print('refreshToken: ${_refreshToken}');
+
           
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => LoginSuccessPage(
-          //       refreshToken: _refreshToken!,
-          //       accessToken: _accessToken!,
-          //     ),
-          //   ),
-          // );
+          // Controllo se l'immagine del profilo è null direttamente nella risposta JSON
+          final responseData = response.data;
+          if (responseData['picture'] == null) {
+            await _updateProfilePictureWithDefault();
+          }
+
+          if (responseData.containsKey('description') && responseData['description'] == null) {
+            await changeUserDescription("hello"); 
+          }
+
+
+          
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -80,6 +90,9 @@ class _LoginPageState extends State<LoginPage> {
           print('Errore: token mancante nella risposta del server');
         }
 
+        
+
+
         User user = User.fromJson(response.data);
         print('Benvenuto, ${user.firstName} ${user.lastName}');
         print('Email: ${user.email}');
@@ -95,7 +108,72 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  
+  Future<void> _updateProfilePictureWithDefault() async {
+    final String url = 'http://localhost:8000/auth/extra/image';
+
+    // Ottieni il file dell'immagine dalla cartella degli asset
+    final ByteData bytes = await rootBundle.load('assets/img/default_profile_image.png');
+    final tempDir = await getTemporaryDirectory();
+    final file = await File('${tempDir.path}/default_profile_image.png').create();
+    await file.writeAsBytes(bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+
+    FormData formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path, filename: path.basename(file.path)),
+    });
+
+    try {
+      await _dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Cookie': '${_refreshToken}; ${_accessToken}',
+          },
+        ),
+      );
+      print('Immagine del profilo aggiornata con successo');
+    } catch (e) {
+      print('Errore durante l\'aggiornamento dell\'immagine del profilo: $e');
+    }
+  }
+
+  Future<void> changeUserDescription(String description) async {
+    String url = 'http://localhost:8000/auth/extra/description'; 
+
+    final Map<String, dynamic> data = {
+      'description': description,
+    };
+
+    try {
+      final response = await Dio().post(
+        url,
+        data: data,
+        options: Options(
+          headers: {
+            'Cookie': '${_refreshToken}; ${_accessToken}',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Descrizione utente cambiata con successo');
+      } else {
+        print('Errore durante il cambio della descrizione utente: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Errore durante la richiesta HTTP: $e');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SignupPage() ));
                 }, 
                 child: Text('Back To SignUp'))
+                
               ],)
               // SizedBox(height: 12.0),
               // ElevatedButton(
