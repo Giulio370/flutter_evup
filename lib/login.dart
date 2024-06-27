@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _accessToken;
 
   Future<void> login() async {
-    final String url = 'http://localhost:8000/auth/login/email';
+    final String url = 'https://api.evup.it/auth/login/email';
     final Map<String, dynamic> data = {
       'email': _emailController.text,
       'password': _passwordController.text,
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _updateProfilePictureWithDefault() async {
-    final String url = 'http://localhost:8000/auth/extra/image';
+    final String url = 'https://api.evup.it/auth/extra/image';
 
     // Ottieni il file dell'immagine dalla cartella degli asset
     final ByteData bytes = await rootBundle.load('assets/img/default_profile_image.png');
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> changeUserDescription(String description) async {
-    String url = 'http://localhost:8000/auth/extra/description'; 
+    String url = 'https://api.evup.it/auth/extra/description'; 
 
     final Map<String, dynamic> data = {
       'description': description,

@@ -30,7 +30,7 @@ class _SignupPageState extends State<SignupPage> {
 
       // Send signup request to backend
       try {
-        Response response = await Dio().post('http://localhost:8000/auth/signup/email',
+        Response response = await Dio().post('https://api.evup.it/auth/signup/email',
             data: {
               'email': email,
               'password': password,

@@ -27,7 +27,7 @@ class _AddEventPageState extends State<AddEventPage> {
 
   Future<List<Event>> fetchEvents() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8000/events/get'),
+      Uri.parse('https://api.evup.it/events/get'),
       headers: {
         'Cookie': '${widget.accessToken}; ${widget.refreshToken}',
         'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ class _AddEventPageState extends State<AddEventPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final url = 'http://localhost:8000/events/remove/${event.slug}';
+                final url = 'https://api.evup.it/events/remove/${event.slug}';
                 final response = await http.delete(
                   Uri.parse(url),
                   headers: {
@@ -288,7 +288,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
   Future<void> _submitEvent() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/events/create'),
+        Uri.parse('https://api.evup.it/events/create'),
         headers: {
           'Cookie': '${widget.accessToken}; ${widget.refreshToken}',
           'Content-Type': 'application/json',
@@ -518,7 +518,7 @@ class _EditEventDialogState extends State<EditEventDialog> {
         ElevatedButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              final url = 'http://localhost:8000/events/update/${widget.event.slug}';
+              final url = 'https://api.evup.it/events/update/${widget.event.slug}';
               //final url = 'http://localhost:8000/events/update/Evento-di-prova';
               final response = await http.put(
                 Uri.parse(url),

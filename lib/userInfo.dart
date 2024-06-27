@@ -61,7 +61,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   Future<User> fetchUser() async {
-    String url1 = 'http://localhost:8000/auth/fetch/user';
+    String url1 = 'https://api.evup.it/auth/fetch/user';
     final Dio dio = Dio();
 
     try {
